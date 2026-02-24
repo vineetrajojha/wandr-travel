@@ -1,0 +1,111 @@
+/* Base Container */
+.container {
+    width: min(100% - 2rem, 1280px);
+    margin-inline: auto;
+}
+
+/* Responsive Grid Helper */
+.grid {
+    display: grid;
+    gap: var(--sp-lg);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* Section Spacing */
+.section-padding {
+    padding: var(--sp-3xl) 0;
+}
+
+.section-title {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--sp-lg);
+}
+
+/* Flex Helpers */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.gap-sm {
+    gap: var(--sp-sm);
+}
+
+.gap-md {
+    gap: var(--sp-md);
+}
+
+.gap-lg {
+    gap: var(--sp-lg);
+}
+
+/* Visibility */
+.hidden {
+    display: none !important;
+}
+
+/* Auth Layout */
+.auth {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    background: var(--bg-primary);
+    padding: var(--sp-xl);
+}
+
+.auth__card {
+    width: min(100%, 440px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: var(--sp-2xl);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Admin Layout */
+.admin-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+}
+
+@media (max-width: 1023px) {
+    .admin-layout {
+        grid-template-columns: 80px 1fr;
+    }
+}
+
+@media (max-width: 639px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+        padding-bottom: 60px;
+        /* Mobile nav space */
+    }
+}

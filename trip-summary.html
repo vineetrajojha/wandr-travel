@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Summary - Wandr</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .summary-header {
+            margin-top: calc(var(--nav-height, 80px) + var(--sp-xl));
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-xl);
+            padding: var(--sp-2xl);
+            margin-bottom: var(--sp-2xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: var(--sp-xl);
+            box-shadow: var(--shadow);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: var(--sp-2xl);
+            margin-bottom: var(--sp-3xl);
+        }
+
+        .acc-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            margin-bottom: var(--sp-md);
+            overflow: hidden;
+            transition: border-color var(--dur-fast);
+        }
+
+        .acc-item--active {
+            border-color: var(--clr-accent);
+        }
+
+        .acc-header {
+            padding: var(--sp-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .acc-icon {
+            transition: transform var(--dur-base);
+        }
+
+        .acc-item--active .acc-icon {
+            transform: rotate(180deg);
+        }
+
+        .acc-content {
+            padding: 0 var(--sp-lg) var(--sp-lg);
+            display: none;
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            border-top: 1px solid var(--border);
+            padding-top: var(--sp-md);
+        }
+
+        .acc-item--active .acc-content {
+            display: block;
+        }
+
+        /* Progress */
+        .prog-container {
+            height: 8px;
+            background: var(--border);
+            border-radius: var(--r-pill);
+            margin-top: var(--sp-sm);
+            overflow: hidden;
+        }
+
+        .prog-bar {
+            height: 100%;
+            border-radius: var(--r-pill);
+            transition: width 1s var(--ease-spring);
+        }
+
+        /* Card override */
+        .util-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: var(--sp-xl);
+            margin-bottom: var(--sp-lg);
+        }
+
+        @media (max-width: 992px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="nav" id="navbar">
+        <a href="index.html" class="nav__brand">
+            <i data-lucide="compass" class="nav__logo"></i>
+            <span class="nav__wordmark">Wandr</span>
+        </a>
+        <div class="nav__actions" style="margin-left: auto; display: flex; align-items: center; gap: var(--sp-sm);">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                <i data-lucide="sun" class="theme-toggle__sun"></i>
+                <i data-lucide="moon" class="theme-toggle__moon"></i>
+            </button>
+            <button class="btn btn--outline" onclick="showToast('Link copied to clipboard!')"><i data-lucide="share-2"
+                    style="width: 16px;"></i> Share</button>
+            <button class="btn btn--primary" onclick="showToast('Generating PDF...', 'info')"><i data-lucide="download"
+                    style="width: 16px;"></i> PDF</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="summary-header fade-in">
+            <div>
+                <span class="font-mono"
+                    style="font-size: var(--text-xs); color: var(--clr-accent); text-transform: uppercase;">AI Itinerary
+                    Generated</span>
+                <h1 style="font-family: var(--font-display); font-size: var(--text-3xl); margin: var(--sp-sm) 0;">Trip
+                    to Reykjavik, Iceland</h1>
+                <p class="field__hint" style="display: flex; align-items: center; gap: var(--sp-sm);">
+                    <i data-lucide="calendar" style="width: 14px;"></i> Oct 12 - Oct 18 (6 Days) •
+                    <i data-lucide="users" style="width: 14px;"></i> 2 Travelers
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <p class="field__hint" style="margin-bottom: var(--sp-xs);">Est. Total Cost</p>
+                <h2 style="font-family: var(--font-mono); font-size: var(--text-2xl); color: var(--text-primary);">
+                    $4,850</h2>
+            </div>
+        </div>
+
+        <div class="summary-grid">
+            <!-- Left Side: Itinerary -->
+            <div>
+                <h2 class="section-title" style="margin-bottom: var(--sp-lg);">Day-by-Day Plan</h2>
+                <div class="accordion">
+                    <div class="acc-item acc-item--active">
+                        <div class="acc-header" onclick="this.parentElement.classList.toggle('acc-item--active')">
+                            <span>Day 1: Arrival & City Exploration</span>
+                            <i data-lucide="chevron-down" class="acc-icon"></i>
+                        </div>
+                        <div class="acc-content">
+                            <p style="margin-bottom: var(--sp-sm);"><strong>Morning:</strong> Arrive at Keflavik
+                                Airport, take Flybus to city center.</p>
+                            <p style="margin-bottom: var(--sp-sm);"><strong>Afternoon:</strong> Check-in at hotel and
+                                visit Hallgrímskirkja church.</p>
+                            <p><strong>Evening:</strong> Welcome dinner at a local seafood restaurant.</p>
+                        </div>
+                    </div>
+
+                    <div class="acc-item">
+                        <div class="acc-header" onclick="this.parentElement.classList.toggle('acc-item--active')">
+                            <span>Day 2: The Golden Circle Tour</span>
+                            <i data-lucide="chevron-down" class="acc-icon"></i>
+                        </div>
+                        <div class="acc-content">
+                            <p>Full day tour visiting Thingvellir National Park, Geysir, and Gullfoss waterfall.</p>
+                        </div>
+                    </div>
+
+                    <div class="acc-item">
+                        <div class="acc-header" onclick="this.parentElement.classList.toggle('acc-item--active')">
+                            <span>Day 3: South Coast Adventure</span>
+                            <i data-lucide="chevron-down" class="acc-icon"></i>
+                        </div>
+                        <div class="acc-content">
+                            <p>Visit Seljalandsfoss and Skógafoss waterfalls, and the Reynisfjara Black Sand Beach.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Utils -->
+            <div>
+                <!-- Budget Breakdown -->
+                <div class="util-card fade-in">
+                    <h3 style="margin-bottom: var(--sp-lg);">Budget Breakdown</h3>
+
+                    <div style="margin-bottom: var(--sp-md);">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: var(--text-sm); font-weight: 500;">
+                            <span>Flights</span>
+                            <span class="font-mono">$1,200</span>
+                        </div>
+                        <div class="prog-container">
+                            <div class="prog-bar" style="width: 25%; background: var(--clr-accent);"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: var(--sp-md);">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: var(--text-sm); font-weight: 500;">
+                            <span>Accommodation</span>
+                            <span class="font-mono">$1,850</span>
+                        </div>
+                        <div class="prog-container">
+                            <div class="prog-bar" style="width: 40%; background: var(--clr-sage);"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: var(--text-sm); font-weight: 500;">
+                            <span>Food & Activities</span>
+                            <span class="font-mono">$1,800</span>
+                        </div>
+                        <div class="prog-container">
+                            <div class="prog-bar" style="width: 35%; background: #F6AD55;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Packing Sneak Peek -->
+                <div class="util-card fade-in">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-lg);">
+                        <h3 style="margin: 0;">Packing Checklist</h3>
+                        <a href="itinerary.html" class="link" style="font-size: var(--text-sm);">Full List</a>
+                    </div>
+                    <div>
+                        <label class="checkbox" style="margin-bottom: var(--sp-sm);">
+                            <input type="checkbox"> <span>Passport & Documents</span>
+                        </label>
+                        <label class="checkbox" style="margin-bottom: var(--sp-sm);">
+                            <input type="checkbox"> <span>Warm Jacket & Layers</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox"> <span>Hiking Boots</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        style="border-top: 1px solid var(--border); text-align: center; padding: var(--sp-xl) 0; color: var(--text-muted); font-size: var(--text-sm);">
+        <p>&copy; 2026 Wandr Travel. Designed by AI.</p>
+    </footer>
+
+    <!-- JS -->
+    <script src="js/theme.js"></script>
+    <script src="js/nav.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

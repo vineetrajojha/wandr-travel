@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination Details - Smart AI Travel Planner</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/000000/airplane-take-off.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .details-gallery {
+            height: 500px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover {
+            filter: brightness(0.8);
+        }
+
+        .gallery-main {
+            grid-row: span 2;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 3rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+        }
+
+        .highlight-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 992px) {
+            .details-gallery {
+                height: 300px;
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+            }
+
+            .gallery-side {
+                display: none;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-plane-departure"></i> Travel<span>Smart</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="destinations.html" class="nav-link">Destinations</a></li>
+                <li><a href="plan-trip.html" class="nav-link">Plan Trip</a></li>
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+                <a href="login.html" class="btn btn-primary">Login</a>
+                <button class="hamburger"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container section-padding">
+        <!-- Gallery -->
+        <div class="details-gallery fade-in">
+            <img src="https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?auto=format&fit=crop&q=80&w=1200"
+                alt="Main" class="gallery-item gallery-main">
+            <img src="https://images.unsplash.com/photo-1527668752968-14dc70a27c95?auto=format&fit=crop&q=80&w=600"
+                alt="Side 1" class="gallery-item gallery-side">
+            <img src="https://images.unsplash.com/photo-1517522064165-22d7d3d81997?auto=format&fit=crop&q=80&w=600"
+                alt="Side 2" class="gallery-item gallery-side">
+        </div>
+
+        <div class="details-grid">
+            <div class="content-left">
+                <header style="margin-bottom: 2rem;">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <span
+                            style="padding: 0.25rem 0.75rem; background: rgba(79, 70, 229, 0.1); color: var(--primary); border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Adventure</span>
+                        <span
+                            style="padding: 0.25rem 0.75rem; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Nature</span>
+                    </div>
+                    <h1 style="font-size: 3rem; margin-bottom: 1rem;">Reykjavik, Iceland</h1>
+                    <div style="display: flex; align-items: center; gap: 1.5rem; color: var(--text-muted);">
+                        <span><i class="fas fa-star" style="color: var(--accent);"></i> 4.9 (1,240 Reviews)</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Capital Region, Iceland</span>
+                    </div>
+                </header>
+
+                <section class="info-card fade-in">
+                    <h2 style="margin-bottom: 1.5rem;">Overview</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Reykjavik, on the coast of Iceland, is
+                        the country's capital and largest city. It's home to the National and Saga museums, tracing
+                        Iceland’s Viking history. The striking concrete Hallgrímskirkja church and rotating Perlan glass
+                        dome offer sweeping views of the sea and nearby hills.</p>
+                    <p style="color: var(--text-muted);">Experience the vibrant culture, world-class cuisine, and the
+                        Gateway to Iceland's natural wonders, including the Blue Lagoon and the Golden Circle.</p>
+                </section>
+
+                <section class="fade-in" style="margin-bottom: 2rem;">
+                    <h2 style="margin-bottom: 1.5rem;">Trip Highlights</h2>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-water"></i></div>
+                        <div>
+                            <h4 style="margin-bottom: 0.25rem;">Blue Lagoon Rejuvenation</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Soak in the geothermal seawater,
+                                known for its healing properties.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-mountain"></i></div>
+                        <div>
+                            <h4 style="margin-bottom: 0.25rem;">The Golden Circle Tour</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Visit Thingvellir National Park,
+                                Geysir, and Gullfoss waterfall.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-moon"></i></div>
+                        <div>
+                            <h4 style="margin-bottom: 0.25rem;">Northern Lights Hunting</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Venture out into the dark night to
+                                witness the celestial dance.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="content-right">
+                <!-- Weather Card -->
+                <div class="card info-card fade-in" style="text-align: center;">
+                    <h3 style="margin-bottom: 1rem;">Current Weather</h3>
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun"
+                            style="color: var(--secondary);"></i></div>
+                    <div style="font-size: 2.5rem; font-weight: 700;">8°C</div>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Mostly Cloudy</p>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                        <div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Humidity</p>
+                            <p style="font-weight: 600;">72%</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Wind</p>
+                            <p style="font-weight: 600;">12 km/h</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Preview -->
+                <div class="card info-card fade-in" style="background: var(--primary); color: white;">
+                    <h3 style="margin-bottom: 1rem;">Plan Your Trip</h3>
+                    <p style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 1.5rem;">Let our AI generate a
+                        personalized itinerary for Reykjavik based on your style.</p>
+                    <a href="plan-trip.html" class="btn"
+                        style="background: white; color: var(--primary); width: 100%; text-align: center;">Start
+                        Planning</a>
+                </div>
+
+                <!-- Map Placeholder -->
+                <div class="card fade-in"
+                    style="height: 250px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=400"
+                        alt="Map" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;">
+                    <div style="position: absolute; text-align: center;">
+                        <i class="fas fa-map-marked-alt"
+                            style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                        <p style="font-weight: 600; color: #333;">Interactive Map</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer same as index.html -->
+    <footer style="background: var(--text-main); color: white; padding: 5rem 0 2rem;">
+        <div class="container" style="text-align: center; opacity: 0.5; font-size: 0.8rem;">
+            &copy; 2024 Smart AI Travel Planner. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

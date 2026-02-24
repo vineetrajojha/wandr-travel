@@ -1,0 +1,99 @@
+:root {
+    /* Core Brand */
+    --clr-sand: #E8D5B0;
+    --clr-terracotta: #C96A3B;
+    --clr-sage: #6B8C6E;
+    --clr-obsidian: #0F0F0F;
+    --clr-ivory: #FAF7F2;
+
+    /* Semantic */
+    --clr-accent: #C96A3B;
+    --clr-accent-glow: rgba(201, 106, 59, 0.35);
+    --clr-glass: rgba(255, 255, 255, 0.07);
+    --clr-glass-border: rgba(255, 255, 255, 0.12);
+
+    /* Light Mode */
+    --bg-primary: var(--clr-ivory);
+    --bg-primary-rgb: 250, 247, 242;
+    --bg-card: #FFFFFF;
+    --text-primary: var(--clr-obsidian);
+    --text-secondary: #4A4A4A;
+    --text-muted: #8A8A8A;
+    --border: rgba(0, 0, 0, 0.08);
+    --shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.14);
+
+    /* Dark Mode Overrides (applied via [data-theme="dark"]) */
+    --bg-primary-dark: #0A0A0A;
+    --bg-primary-rgb-dark: 10, 10, 10;
+    --bg-card-dark: #141414;
+    --text-primary-dark: #F0EDE8;
+    --text-secondary-dark: #B0AAA0;
+    --border-dark: rgba(255, 255, 255, 0.08);
+    --shadow-dark: 0 4px 32px rgba(0, 0, 0, 0.5);
+
+    /* Spacing Scale */
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 16px;
+    --sp-lg: 24px;
+    --sp-xl: 40px;
+    --sp-2xl: 64px;
+    --sp-3xl: 96px;
+
+    /* Border Radius */
+    --r-sm: 6px;
+    --r-md: 12px;
+    --r-lg: 20px;
+    --r-xl: 32px;
+    --r-pill: 9999px;
+
+    /* Transitions */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-fast: 160ms;
+    --dur-base: 280ms;
+    --dur-slow: 480ms;
+    --dur-xl: 800ms;
+
+    /* Type Scale */
+    --font-display: 'Playfair Display', Georgia, serif;
+    /* Hero headlines, section titles */
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    /* Body text, UI labels */
+    --font-mono: 'Space Mono', monospace;
+    /* Prices, data, tags */
+
+    /* Sizes (fluid using clamp) */
+    --text-xs: clamp(0.7rem, 1.5vw, 0.75rem);
+    --text-sm: clamp(0.85rem, 1.8vw, 0.9rem);
+    --text-base: clamp(0.95rem, 2vw, 1rem);
+    --text-lg: clamp(1.1rem, 2.2vw, 1.25rem);
+    --text-xl: clamp(1.25rem, 2.8vw, 1.5rem);
+    --text-2xl: clamp(1.6rem, 3.5vw, 2rem);
+    --text-3xl: clamp(2rem, 5vw, 3rem);
+    --text-hero: clamp(3rem, 8vw, 6rem);
+}
+
+[data-theme="dark"] {
+    --bg-primary: var(--bg-primary-dark);
+    --bg-primary-rgb: var(--bg-primary-rgb-dark);
+    --bg-card: var(--bg-card-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --border: var(--border-dark);
+    --shadow: var(--shadow-dark);
+}
+
+/* System preference default */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --bg-primary: var(--bg-primary-dark);
+        --bg-primary-rgb: var(--bg-primary-rgb-dark);
+        --bg-card: var(--bg-card-dark);
+        --text-primary: var(--text-primary-dark);
+        --text-secondary: var(--text-secondary-dark);
+        --border: var(--border-dark);
+        --shadow: var(--shadow-dark);
+    }
+}

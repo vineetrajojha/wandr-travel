@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Space+Mono&display=swap');
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    /* Smooth theme transitions globally */
+    transition: background-color var(--dur-base), color var(--dur-base);
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    /* Smooth theme transitions for borders and backgrounds */
+    transition: background-color var(--dur-base), border-color var(--dur-base);
+}
+
+/* Exception: elements where transition would look wrong */
+img,
+video,
+.no-theme-transition {
+    transition: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+/* Accessibility */
+:focus-visible {
+    outline: 2px solid var(--clr-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--sp-md);
+    background: var(--clr-accent);
+    color: white;
+    padding: var(--sp-sm) var(--sp-lg);
+    border-radius: var(--r-md);
+    z-index: 9999;
+    font-size: var(--text-sm);
+    transition: top var(--dur-fast);
+}
+
+.skip-link:focus {
+    top: var(--sp-md);
+}
+
+.link {
+    color: var(--clr-terracotta);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color var(--dur-fast);
+}
+
+.link:hover {
+    color: var(--clr-obsidian);
+}
+
+[data-theme="dark"] .link:hover {
+    color: var(--clr-ivory);
+}

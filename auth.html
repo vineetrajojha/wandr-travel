@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up - Wandr</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .auth-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100svh;
+        }
+
+        .auth-graphic {
+            background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: var(--sp-3xl);
+            color: white;
+        }
+
+        .auth-graphic::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(11, 15, 26, 0.9) 0%, rgba(11, 15, 26, 0) 80%);
+        }
+
+        .auth-graphic__content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-main {
+            display: flex;
+            flex-direction: column;
+            padding: var(--sp-2xl);
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .auth-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-sm);
+            font-family: var(--font-display);
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            margin-bottom: auto;
+        }
+
+        .auth-brand i {
+            color: var(--clr-accent);
+        }
+
+        .auth-box {
+            max-width: 440px;
+            margin: auto;
+            width: 100%;
+        }
+
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            gap: var(--sp-md);
+            border-bottom: 2px solid var(--border);
+            margin-bottom: var(--sp-2xl);
+        }
+
+        .auth-tab {
+            padding: var(--sp-sm) var(--sp-md);
+            font-weight: 600;
+            font-size: var(--text-lg);
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all var(--dur-fast);
+        }
+
+        .auth-tab.active {
+            color: var(--clr-accent);
+            border-bottom-color: var(--clr-accent);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fade-in var(--dur-base) var(--ease-spring);
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Password Strength */
+        .pwd-meter {
+            height: 4px;
+            background: var(--border);
+            border-radius: var(--r-pill);
+            margin-top: var(--sp-xs);
+            display: flex;
+            gap: 2px;
+        }
+
+        .pwd-seg {
+            flex: 1;
+            border-radius: var(--r-pill);
+            background: var(--border);
+            transition: background var(--dur-fast);
+        }
+
+        .pwd-hint {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-top: var(--sp-xs);
+            display: block;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: var(--sp-xl) 0;
+            color: var(--text-muted);
+            font-size: var(--text-sm);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: var(--sp-md);
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: var(--sp-md);
+        }
+
+        .btn-social {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: var(--sp-md);
+            border-radius: var(--r-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--dur-fast);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--sp-sm);
+        }
+
+        .btn-social:hover {
+            background: var(--border);
+        }
+
+        @media (max-width: 992px) {
+            .auth-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-graphic {
+                display: none;
+            }
+
+            .auth-main {
+                justify-content: center;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-layout">
+        <div class="auth-graphic">
+            <div class="auth-graphic__content">
+                <h2 style="font-family: var(--font-display); font-size: var(--text-4xl); margin-bottom: var(--sp-md);">
+                    Every journey begins with a single step.</h2>
+                <p style="font-size: var(--text-lg); opacity: 0.9;">Join Wandr and let AI craft your perfect itinerary.
+                </p>
+            </div>
+        </div>
+
+        <div class="auth-main">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"
+                style="position: absolute; top: var(--sp-2xl); right: var(--sp-2xl);">
+                <i data-lucide="sun" class="theme-toggle__sun"></i>
+                <i data-lucide="moon" class="theme-toggle__moon"></i>
+            </button>
+
+            <a href="index.html" class="auth-brand">
+                <i data-lucide="compass"></i> <span>Wandr</span>
+            </a>
+
+            <div class="auth-box">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-target="login">Log In</div>
+                    <div class="auth-tab" data-target="signup">Sign Up</div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login" class="auth-form active" onsubmit="return handleLogin(event)">
+                    <div class="field">
+                        <label class="field__label" for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="field__input" placeholder="you@example.com"
+                            required>
+                    </div>
+                    <div class="field">
+                        <div style="display: flex; justify-content: space-between;">
+                            <label class="field__label" for="login-pwd">Password</label>
+                            <a href="#" class="link" style="font-size: var(--text-sm);">Forgot password?</a>
+                        </div>
+                        <input type="password" id="login-pwd" class="field__input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full">Log In</button>
+
+                    <div class="divider">or continue with</div>
+
+                    <div style="display: flex; gap: var(--sp-md);">
+                        <button type="button" class="btn-social">Google</button>
+                        <button type="button" class="btn-social">Apple</button>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup" class="auth-form">
+                    <div class="grid grid-2" style="gap: var(--sp-md);">
+                        <div class="field">
+                            <label class="field__label" for="reg-first">First Name</label>
+                            <input type="text" id="reg-first" class="field__input" placeholder="Jane" required>
+                        </div>
+                        <div class="field">
+                            <label class="field__label" for="reg-last">Last Name</label>
+                            <input type="text" id="reg-last" class="field__input" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field__label" for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" class="field__input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="field">
+                        <label class="field__label" for="reg-pwd">Password</label>
+                        <input type="password" id="reg-pwd" class="field__input" placeholder="Create a password"
+                            required oninput="checkStrength(this.value)">
+                        <div class="pwd-meter">
+                            <div class="pwd-seg" id="seg-1"></div>
+                            <div class="pwd-seg" id="seg-2"></div>
+                            <div class="pwd-seg" id="seg-3"></div>
+                            <div class="pwd-seg" id="seg-4"></div>
+                        </div>
+                        <span class="pwd-hint" id="pwd-hint">Must be at least 8 characters.</span>
+                    </div>
+
+                    <button type="button" class="btn btn--primary btn--full" style="margin-top: var(--sp-lg);"
+                        onclick="window.location.href='plan-trip.html'">Create Account</button>
+
+                    <div class="divider">or sign up with</div>
+
+                    <div style="display: flex; gap: var(--sp-md);">
+                        <button type="button" class="btn-social">Google</button>
+                        <button type="button" class="btn-social">Apple</button>
+                    </div>
+                </form>
+            </div>
+
+            <div style="margin-top: auto;"></div> <!-- spacer -->
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="js/theme.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.auth-tab');
+        const forms = document.querySelectorAll('.auth-form');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                forms.forEach(f => f.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.target).classList.add('active');
+            });
+        });
+
+        // Simple Password Strength Meter
+        function checkStrength(pwd) {
+            const seg1 = document.getElementById('seg-1');
+            const seg2 = document.getElementById('seg-2');
+            const seg3 = document.getElementById('seg-3');
+            const seg4 = document.getElementById('seg-4');
+            const hint = document.getElementById('pwd-hint');
+
+            // Reset
+            [seg1, seg2, seg3, seg4].forEach(s => s.style.background = 'var(--border)');
+
+            let strength = 0;
+            if (pwd.length >= 8) strength += 1;
+            if (pwd.match(/[A-Z]/)) strength += 1;
+            if (pwd.match(/[0-9]/)) strength += 1;
+            if (pwd.match(/[^A-Za-z0-9]/)) strength += 1;
+
+            if (pwd.length === 0) {
+                hint.innerText = "Must be at least 8 characters.";
+                return;
+            }
+
+            if (strength >= 1) { seg1.style.background = '#E53E3E'; hint.innerText = "Weak"; }
+            if (strength >= 2) { seg2.style.background = '#DD6B20'; hint.innerText = "Fair"; }
+            if (strength >= 3) { seg3.style.background = '#D69E2E'; hint.innerText = "Good"; }
+            if (strength >= 4) { seg4.style.background = '#38A169'; hint.innerText = "Strong"; }
+        }
+
+        // Dummy Login logic
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            if (email === 'satyam@wandr.com') {
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Invalid email! Try using satyam@wandr.com with any password.');
+            }
+            return false;
+        }
+    </script>
+</body>
+
+</html>

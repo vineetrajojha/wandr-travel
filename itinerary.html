@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerary - Wandr</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .itin-header {
+            margin-top: calc(var(--nav-height, 80px) + var(--sp-2xl));
+            margin-bottom: var(--sp-2xl);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--sp-lg);
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: var(--sp-2xl);
+            margin-bottom: var(--sp-3xl);
+            align-items: start;
+        }
+
+        /* Day Tabs & Timeline */
+        .day-tabs {
+            display: flex;
+            gap: var(--sp-md);
+            overflow-x: auto;
+            margin-bottom: var(--sp-xl);
+            padding-bottom: var(--sp-xs);
+        }
+
+        .day-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .day-tab {
+            padding: var(--sp-md) var(--sp-lg);
+            border-radius: var(--r-md);
+            background: transparent;
+            border: 1.5px solid var(--border);
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--dur-fast);
+            white-space: nowrap;
+        }
+
+        .day-tab.day-tab--active {
+            background: var(--clr-accent-glow);
+            border-color: var(--clr-accent);
+            color: var(--clr-accent);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: var(--sp-xl);
+            margin-bottom: var(--sp-2xl);
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline__item {
+            position: relative;
+            margin-bottom: var(--sp-xl);
+        }
+
+        .timeline__item::before {
+            content: '';
+            position: absolute;
+            left: calc(var(--sp-xl) * -1 - 5px);
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--clr-accent);
+            z-index: 2;
+        }
+
+        .timeline__time {
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            color: var(--clr-accent);
+            font-weight: 700;
+            margin-bottom: var(--sp-xs);
+            display: block;
+        }
+
+        .timeline__card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: var(--sp-lg);
+            box-shadow: var(--shadow);
+        }
+
+        /* Utility Cards */
+        .util-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: var(--sp-xl);
+            margin-bottom: var(--sp-lg);
+        }
+
+        /* Donut Chart (CSS only) */
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: var(--sp-lg) 0;
+        }
+
+        .donut {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: conic-gradient(var(--clr-accent) 0% 40%,
+                    var(--clr-sage) 40% 70%,
+                    #F6AD55 70% 90%,
+                    var(--border) 90% 100%);
+            position: relative;
+            display: grid;
+            place-items: center;
+        }
+
+        .donut::after {
+            content: 'Total \a ₹4,85,000';
+            white-space: pre-wrap;
+            text-align: center;
+            font-size: var(--text-sm);
+            font-weight: 700;
+            position: absolute;
+            inset: 20px;
+            background: var(--bg-card);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--text-sm);
+            margin-bottom: var(--sp-xs);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: var(--sp-xs);
+        }
+
+        /* Weather Card */
+        .weather {
+            display: flex;
+            gap: var(--sp-md);
+            align-items: center;
+        }
+
+        .weather__icon {
+            font-size: 40px;
+        }
+
+        /* Map Embed Container */
+        .map-wrap {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: var(--sp-xl);
+        }
+
+        /* Packing List specific */
+        .pack-category {
+            margin-bottom: var(--sp-md);
+        }
+
+        .pack-category__toggle {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: var(--sp-sm) 0;
+            background: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pack-category__items {
+            padding: var(--sp-sm) 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-sm);
+        }
+
+        /* Star hover logic inside review section */
+        .star-row {
+            display: flex;
+            gap: 4px;
+            font-size: 24px;
+            color: var(--border);
+            cursor: pointer;
+        }
+
+        .star {
+            transition: color var(--dur-fast);
+        }
+
+        .star--filled {
+            color: #F6AD55;
+        }
+
+        @media (max-width: 992px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav" id="navbar">
+        <a href="index.html" class="nav__brand">
+            <i data-lucide="compass" class="nav__logo"></i>
+            <span class="nav__wordmark">Wandr</span>
+        </a>
+        <div class="nav__actions" style="margin-left: auto;">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" style="margin-right: var(--sp-md)">
+                <i data-lucide="sun" class="theme-toggle__sun"></i>
+                <i data-lucide="moon" class="theme-toggle__moon"></i>
+            </button>
+            <button class="btn btn--outline"><i data-lucide="share" style="width: 16px;"></i> Share</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Header -->
+        <header class="itin-header fade-in">
+            <div>
+                <div class="tag" style="margin-bottom: var(--sp-sm);">6 Days • 2 Travelers</div>
+                <h1 id="itin-title" style="font-family: var(--font-display); font-size: var(--text-3xl);">Reykjavik,
+                    Iceland</h1>
+                <p class="text-muted" style="margin-top: var(--sp-xs);"><i data-lucide="calendar"
+                        style="width: 16px; display:inline-block"></i> Thu, Oct 12 - Tue, Oct 18, 2026</p>
+            </div>
+            <div style="display: flex; gap: var(--sp-sm);">
+                <button class="btn btn--outline"><i data-lucide="download" style="width: 16px;"></i> PDF</button>
+                <button class="btn btn--primary"><i data-lucide="calendar-plus" style="width: 16px;"></i> Add to Google
+                    Calendar</button>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left col: Itinerary details -->
+            <div>
+                <!-- Map embed -->
+                <div class="map-wrap fade-in">
+                    <iframe id="itin-map"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d111234.69315354992!2d-21.986872583271112!3d64.13329910609789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48d674b9eed820df%3A0x60655b3aa7285312!2sReykjav%C3%ADk%2C%20Iceland!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+
+                <div class="day-tabs fade-in">
+                    <button class="day-tab day-tab--active" data-day="1">Day 1: Arrival</button>
+                    <button class="day-tab" data-day="2">Day 2: Golden Circle</button>
+                    <button class="day-tab" data-day="3">Day 3: South Coast</button>
+                </div>
+
+                <!-- Day 1 Content -->
+                <div id="day-1" class="day-content fade-in">
+                    <div class="timeline">
+                        <div class="timeline__item">
+                            <span class="timeline__time">09:00 AM</span>
+                            <div class="timeline__card">
+                                <h4 style="font-size: var(--text-lg); margin-bottom: var(--sp-xs);">Arrive at KEF
+                                    Airport</h4>
+                                <p class="text-secondary text-sm">Pick up rental car or take the Flybus straight into
+                                    the city.</p>
+                            </div>
+                        </div>
+                        <div class="timeline__item">
+                            <span class="timeline__time">12:30 PM</span>
+                            <div class="timeline__card">
+                                <h4 style="font-size: var(--text-lg); margin-bottom: var(--sp-xs);">Lunch at Bæjarins
+                                    Beztu Pylsur</h4>
+                                <p class="text-secondary text-sm" style="margin-bottom: var(--sp-sm);">World famous hot
+                                    dog stand in the harbor.</p>
+                                <span class="tag">🍔 Food</span> <span class="tag font-mono">$ Estimate: $10</span>
+                            </div>
+                        </div>
+                        <div class="timeline__item">
+                            <span class="timeline__time">03:00 PM</span>
+                            <div class="timeline__card">
+                                <h4 style="font-size: var(--text-lg); margin-bottom: var(--sp-xs);">Check-in & Explore
+                                    Hallgrímskirkja</h4>
+                                <p class="text-secondary text-sm">Drop bags at the hotel, then walk to the iconic church
+                                    for city views.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 2 Content (Hidden by default) -->
+                <div id="day-2" class="day-content hidden">
+                    <div class="timeline">
+                        <div class="timeline__item">
+                            <span class="timeline__time">08:00 AM</span>
+                            <div class="timeline__card">
+                                <h4 style="font-size: var(--text-lg);">Depart for Golden Circle</h4>
+                            </div>
+                        </div>
+                        <div class="timeline__item">
+                            <span class="timeline__time">10:00 AM</span>
+                            <div class="timeline__card">
+                                <h4 style="font-size: var(--text-lg);">Þingvellir National Park</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 3 Content (Hidden by default) -->
+                <div id="day-3" class="day-content hidden">
+                    <div class="timeline">
+                        <div class="timeline__item">
+                            <span class="timeline__time">07:30 AM</span>
+                            <div class="timeline__card">
+                                <h4 style="font-size: var(--text-lg);">Drive South Coast</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotels -->
+                <h3 class="section-title">Where to Stay</h3>
+                <div class="grid grid-2">
+                    <div class="util-card" style="padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600"
+                            style="width: 100%; height: 160px; object-fit: cover;">
+                        <div style="padding: var(--sp-lg);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <h4 style="font-size: var(--text-lg); margin-bottom: var(--sp-xs);">Reykjavik Konsulat
+                                    Hotel</h4>
+                                <span class="tag" style="background:var(--clr-accent-glow); color:var(--clr-accent)">★
+                                    4.8</span>
+                            </div>
+                            <p class="font-mono text-secondary text-sm" style="margin-bottom: var(--sp-md);">$220 /
+                                night</p>
+                            <button class="btn btn--outline btn--full">View Deal</button>
+                        </div>
+                    </div>
+                    <div class="util-card" style="padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600"
+                            style="width: 100%; height: 160px; object-fit: cover;">
+                        <div style="padding: var(--sp-lg);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <h4 style="font-size: var(--text-lg); margin-bottom: var(--sp-xs);">Center Hotels
+                                    Skjaldbreid</h4>
+                                <span class="tag" style="background:var(--clr-accent-glow); color:var(--clr-accent)">★
+                                    4.5</span>
+                            </div>
+                            <p class="font-mono text-secondary text-sm" style="margin-bottom: var(--sp-md);">$140 /
+                                night</p>
+                            <button class="btn btn--outline btn--full">View Deal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews -->
+                <h3 class="section-title" style="margin-top: var(--sp-2xl);">Rate this Itinerary</h3>
+                <div class="util-card">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--sp-sm);">
+                        <p class="text-secondary">How did we do? Your feedback helps the AI improve.</p>
+                        <div class="star-row">
+                            <span class="star" data-val="1">★</span>
+                            <span class="star" data-val="2">★</span>
+                            <span class="star" data-val="3">★</span>
+                            <span class="star" data-val="4">★</span>
+                            <span class="star" data-val="5">★</span>
+                        </div>
+                        <input type="text" class="field__input" placeholder="Leave a review..."
+                            style="max-width: 400px; margin-top: var(--sp-sm);">
+                        <button class="btn btn--primary">Submit Feedback</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right col: Utilities -->
+            <div>
+
+                <!-- Weather Card -->
+                <div class="util-card fade-in">
+                    <h3 style="margin-bottom: var(--sp-sm);">Current Weather</h3>
+                    <p id="itin-weather-locale" class="text-sm text-secondary" style="margin-bottom: var(--sp-lg);">
+                        Reykjavik, Iceland</p>
+                    <div class="weather">
+                        <span class="weather__icon">☁️</span>
+                        <div>
+                            <div style="font-size: var(--text-2xl); font-weight: 700; font-family: var(--font-mono);">
+                                6°C</div>
+                            <div class="text-sm text-muted">Mostly cloudy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Donut -->
+                <div class="util-card fade-in">
+                    <h3 style="margin-bottom: var(--sp-sm);">Budget Breakdown</h3>
+                    <div class="donut-wrap">
+                        <div class="donut"></div>
+                    </div>
+                    <div>
+                        <div class="legend-item">
+                            <span><span class="legend-dot" style="background: var(--clr-accent)"></span> Flights</span>
+                            <span class="font-mono">₹1,20,000</span>
+                        </div>
+                        <div class="legend-item">
+                            <span><span class="legend-dot" style="background: var(--clr-sage)"></span> Hotel</span>
+                            <span class="font-mono">₹1,85,000</span>
+                        </div>
+                        <div class="legend-item">
+                            <span><span class="legend-dot" style="background: #F6AD55"></span> Food & Act.</span>
+                            <span class="font-mono">₹1,80,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Currency Card -->
+                <div class="util-card fade-in currency-card">
+                    <h3 style="margin-bottom: var(--sp-lg);">Currency Converter</h3>
+                    <div style="display: flex; gap: var(--sp-sm); margin-bottom: var(--sp-md);">
+                        <input type="number" id="amount-from" class="field__input" value="1000" style="flex: 1;">
+                        <select id="from-currency" class="select" style="width: 100px;">
+                            <option value="INR" selected>INR</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="AUD">AUD</option>
+                            <option value="CAD">CAD</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-bottom: var(--sp-md);">
+                        <button id="swap-currencies" class="btn-icon">⇅</button>
+                    </div>
+                    <div style="display: flex; gap: var(--sp-sm); margin-bottom: var(--sp-md);">
+                        <input type="number" id="amount-to" class="field__input" readonly
+                            style="flex: 1; background: var(--bg-primary);">
+                        <select id="to-currency" class="select" style="width: 100px;">
+                            <option value="USD" selected>USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="AUD">AUD</option>
+                            <option value="CAD">CAD</option>
+                            <option value="INR">INR</option>
+                        </select>
+                    </div>
+                    <p class="text-xs text-muted text-center currency-card__rate">Exchange rate updating...</p>
+                </div>
+
+                <!-- Packing List -->
+                <div class="util-card fade-in">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-md);">
+                        <h3 style="margin:0;">Packing List</h3>
+                        <span id="packing-count" class="tag font-mono">0 / 4 packed</span>
+                    </div>
+                    <div
+                        style="height: 6px; background: var(--border); border-radius: var(--r-pill); margin-bottom: var(--sp-lg); overflow: hidden;">
+                        <div id="packing-progress"
+                            style="height: 100%; background: var(--clr-sage); width: 0%; transition: width 0.3s ease;">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--sp-sm); margin-bottom: var(--sp-md);">
+                        <input type="text" id="new-item" class="field__input" placeholder="Add custom item..."
+                            style="flex: 1;">
+                        <button class="btn btn--primary" onclick="addItem()">Add</button>
+                    </div>
+
+                    <div class="pack-category">
+                        <button class="pack-category__toggle">
+                            <span>Essentials</span>
+                            <span class="chevron">▼</span>
+                        </button>
+                        <div class="pack-category__items">
+                            <label class="pack-item" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="pack-check" onchange="updateProgress()">
+                                <span class="pack-item__name" style="flex:1">Passport</span>
+                                <button type="button" class="btn-icon btn--xs borderless"
+                                    onclick="deleteItem(this)">✕</button>
+                            </label>
+                            <label class="pack-item" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="pack-check" onchange="updateProgress()">
+                                <span class="pack-item__name" style="flex:1">Credit Cards</span>
+                                <button type="button" class="btn-icon btn--xs borderless"
+                                    onclick="deleteItem(this)">✕</button>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pack-category">
+                        <button class="pack-category__toggle">
+                            <span>Clothes</span>
+                            <span class="chevron">▼</span>
+                        </button>
+                        <div class="pack-category__items">
+                            <label class="pack-item" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="pack-check" onchange="updateProgress()">
+                                <span class="pack-item__name" style="flex:1">Thermal Layers</span>
+                                <button type="button" class="btn-icon btn--xs" onclick="deleteItem(this)">✕</button>
+                            </label>
+                            <label class="pack-item" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="pack-check" onchange="updateProgress()">
+                                <span class="pack-item__name" style="flex:1">Waterproof Jacket</span>
+                                <button type="button" class="btn-icon btn--xs" onclick="deleteItem(this)">✕</button>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- JS -->
+    <script src="js/theme.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/itinerary.js"></script>
+    <script src="js/currency.js"></script>
+    <script src="js/packing-list.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
