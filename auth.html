@@ -257,7 +257,7 @@
                 </form>
 
                 <!-- Signup Form -->
-                <form id="signup" class="auth-form">
+                <form id="signup" class="auth-form" onsubmit="return handleSignup(event)">
                     <div class="grid grid-2" style="gap: var(--sp-md);">
                         <div class="field">
                             <label class="field__label" for="reg-first">First Name</label>
@@ -285,8 +285,7 @@
                         <span class="pwd-hint" id="pwd-hint">Must be at least 8 characters.</span>
                     </div>
 
-                    <button type="button" class="btn btn--primary btn--full" style="margin-top: var(--sp-lg);"
-                        onclick="window.location.href='plan-trip.html'">Create Account</button>
+                    <button type="submit" class="btn btn--primary btn--full" style="margin-top: var(--sp-lg);">Create Account</button>
 
                     <div class="divider">or sign up with</div>
 
@@ -302,6 +301,8 @@
     </div>
 
     <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
     <script src="js/theme.js"></script>
     <script>
         lucide.createIcons();
@@ -348,14 +349,72 @@
             if (strength >= 4) { seg4.style.background = '#38A169'; hint.innerText = "Strong"; }
         }
 
-        // Dummy Login logic
-        function handleLogin(e) {
+        // Supabase Auth logic
+        async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
-            if (email === 'satyam@wandr.com') {
-                window.location.href = 'dashboard.html';
+            const pwd = document.getElementById('login-pwd').value;
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Logging in...';
+            btn.disabled = true;
+
+            const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+                email,
+                password: pwd,
+            });
+
+            btn.innerText = originalText;
+            btn.disabled = false;
+
+            if (error) {
+                alert(`Error: ${error.message}`);
             } else {
-                alert('Invalid email! Try using satyam@wandr.com with any password.');
+                window.location.href = 'dashboard.html';
+            }
+            return false;
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const firstName = document.getElementById('reg-first').value;
+            const lastName = document.getElementById('reg-last').value;
+            const email = document.getElementById('reg-email').value;
+            const pwd = document.getElementById('reg-pwd').value;
+
+            if (pwd.length < 8) {
+                alert("Password must be at least 8 characters.");
+                return false;
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Creating account...';
+            btn.disabled = true;
+
+            const { data, error } = await window.supabaseClient.auth.signUp({
+                email,
+                password: pwd,
+                options: {
+                    data: {
+                        first_name: firstName,
+                        last_name: lastName
+                    }
+                }
+            });
+
+            btn.innerText = originalText;
+            btn.disabled = false;
+
+            if (error) {
+                alert(`Error: ${error.message}`);
+            } else {
+                alert('Account created! Please verify your email or log in.');
+                // clear form
+                e.target.reset();
+                // switch to login tab
+                document.querySelector('.auth-tab[data-target="login"]').click();
             }
             return false;
         }
