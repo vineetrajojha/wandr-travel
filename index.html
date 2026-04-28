@@ -86,16 +86,50 @@
                     <a href="destinations.html" class="btn btn--outline btn--lg">Explore Destinations</a>
                 </div>
 
-                <div class="search-bar">
-                    <div class="search-bar__input-wrap">
-                        <i data-lucide="search" class="search-bar__icon"></i>
-                        <input type="text" id="home-search" placeholder="Where do you want to go today?"
-                            onkeydown="if(event.key==='Enter') document.getElementById('home-search-btn').click()">
+                <div class="flight-search" style="background: var(--bg-card); padding: var(--sp-lg); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); text-align: left; max-width: 800px; margin: 0 auto; color: var(--text-primary);">
+                    <div style="display: flex; gap: var(--sp-md); margin-bottom: var(--sp-md); font-weight: 500; font-size: var(--text-sm);">
+                        <label style="display: flex; align-items: center; gap: var(--sp-xs); cursor: pointer;">
+                            <input type="radio" name="trip-type" value="round-trip" checked onchange="window.toggleReturnDate && window.toggleReturnDate()"> Round Trip
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--sp-xs); cursor: pointer;">
+                            <input type="radio" name="trip-type" value="one-way" onchange="window.toggleReturnDate && window.toggleReturnDate()"> One Way
+                        </label>
                     </div>
-                    <button id="home-search-btn" class="btn btn--primary"
-                        onclick="if(document.getElementById('home-search').value) window.location.href='destinations.html?q=' + encodeURIComponent(document.getElementById('home-search').value)">Search
-                        Flights</button>
+                    <form id="flight-form" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--sp-sm); margin-bottom: var(--sp-md);" onsubmit="window.searchFlights && window.searchFlights(event)">
+                        <div class="field" style="margin: 0;">
+                            <label class="field__label">From</label>
+                            <input type="text" id="flight-from" class="field__input" placeholder="e.g. DEL" required>
+                        </div>
+                        <div class="field" style="margin: 0;">
+                            <label class="field__label">To</label>
+                            <input type="text" id="flight-to" class="field__input" placeholder="e.g. BOM" required>
+                        </div>
+                        <div class="field" style="margin: 0;">
+                            <label class="field__label">Depart</label>
+                            <input type="date" id="flight-depart" class="field__input" required>
+                        </div>
+                        <div class="field" id="return-date-group" style="margin: 0;">
+                            <label class="field__label">Return</label>
+                            <input type="date" id="flight-return" class="field__input" required>
+                        </div>
+                    </form>
+                    <button type="submit" form="flight-form" id="flight-search-btn" class="btn btn--primary btn--full">
+                        <i data-lucide="plane-takeoff" style="width:18px;"></i> <span id="flight-search-text">Search Flights</span>
+                    </button>
                 </div>
+            </div>
+        </section>
+
+        <!-- Flight Results Section (Hidden by Default) -->
+        <section id="flight-results-section" class="section-padding container hidden" style="background: var(--bg-secondary); border-radius: var(--r-lg); margin-top: var(--sp-xl);">
+            <div class="flex justify-between items-center mb-lg" style="margin-bottom: var(--sp-lg)">
+                <div>
+                    <h2 class="section-title" style="margin-bottom: var(--sp-xs)">Flight Results</h2>
+                    <p class="text-muted" id="flight-results-meta">Showing available flights</p>
+                </div>
+            </div>
+            <div id="flight-results-container" style="display: flex; flex-direction: column; gap: var(--sp-md);">
+                <!-- Dynamic flight cards will be injected here -->
             </div>
         </section>
 
@@ -297,6 +331,12 @@
     </footer>
 
     <!-- JS -->
+    <!-- Supabase & Auth -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/save-destination.js"></script>
+    <script src="js/flights.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/nav.js"></script>
     <script src="js/chat.js"></script>

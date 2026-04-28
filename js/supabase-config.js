@@ -6,3 +6,4 @@ const supabaseClientInstance = window.supabase.createClient(supabaseUrl, supabas
 
 // Attach to global window object
 window.supabaseClient = supabaseClientInstance;
+window.supabaseClientInstance = supabaseClientInstance;

@@ -275,7 +275,7 @@
                     <div class="stat-icon"><i data-lucide="globe"></i></div>
                     <div>
                         <p class="field__label">Upcoming Trips</p>
-                        <h3 style="font-size: var(--text-2xl); font-family: var(--font-mono);">2</h3>
+                        <h3 id="stat-upcoming" style="font-size: var(--text-2xl); font-family: var(--font-mono);">0</h3>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -284,7 +284,7 @@
                             data-lucide="plane"></i></div>
                     <div>
                         <p class="field__label">Completed Trips</p>
-                        <h3 style="font-size: var(--text-2xl); font-family: var(--font-mono);">24</h3>
+                        <h3 id="stat-completed" style="font-size: var(--text-2xl); font-family: var(--font-mono);">0</h3>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -292,7 +292,7 @@
                             data-lucide="heart"></i></div>
                     <div>
                         <p class="field__label">Saved Places</p>
-                        <h3 style="font-size: var(--text-2xl); font-family: var(--font-mono);">8</h3>
+                        <h3 id="stat-saved" style="font-size: var(--text-2xl); font-family: var(--font-mono);">0</h3>
                     </div>
                 </div>
             </div>
@@ -303,7 +303,7 @@
                     <h2 class="section-title" style="margin: 0; font-size: var(--text-2xl);">Upcoming Journeys</h2>
                     <a href="itinerary.html" class="link">View All</a>
                 </div>
-                <div class="trip-row">
+                <div id="trip-row-container" class="trip-row">
                     <!-- Trip 1 -->
                     <div class="trip-card">
                         <img class="trip-card__img"
@@ -370,9 +370,93 @@
     </div>
 
     <!-- JS -->
+    <!-- Supabase & Auth -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth-guard.js"></script>
     <script src="js/theme.js"></script>
     <script>
         lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await window.supabaseClientInstance.auth.getSession();
+            if (!session) return;
+
+            const user = session.user;
+            const firstName = user.user_metadata?.first_name || 'Wanderer';
+            const lastName = user.user_metadata?.last_name || '';
+
+            // Update User Profile section
+            const profileP = document.querySelector('.user-profile p:first-of-type');
+            if (profileP) profileP.textContent = `${firstName} ${lastName}`.trim();
+            const welcomeH1 = document.querySelector('.dash-header__welcome h1');
+            if (welcomeH1) welcomeH1.textContent = `Welcome back, ${firstName}`;
+
+            // Fetch Trips
+            const { data: trips, error: tripsError } = await window.supabaseClientInstance
+                .from('trips')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('start_date', { ascending: true });
+
+            if (tripsError) {
+                console.error('Error fetching trips:', tripsError);
+                return;
+            }
+
+            // Fetch Saved Places count
+            const { count: savedCount, error: savedError } = await window.supabaseClientInstance
+                .from('saved_destinations')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id);
+
+            const now = new Date();
+            const upcomingTrips = trips.filter(t => new Date(t.start_date) >= now);
+            const completedTrips = trips.filter(t => new Date(t.end_date) < now);
+
+            // Update Stats
+            document.getElementById('stat-upcoming').textContent = upcomingTrips.length;
+            document.getElementById('stat-completed').textContent = completedTrips.length;
+            document.getElementById('stat-saved').textContent = savedCount || 0;
+
+            // Render Upcoming Trips
+            const tripRow = document.getElementById('trip-row-container');
+            tripRow.innerHTML = ''; // clear static
+
+            if (upcomingTrips.length === 0) {
+                tripRow.innerHTML = '<p class="text-secondary" style="padding: 1rem;">No upcoming trips found. <a href="plan-trip.html" class="link">Plan one now!</a></p>';
+            } else {
+                upcomingTrips.forEach(trip => {
+                    const start = new Date(trip.start_date);
+                    const end = new Date(trip.end_date);
+                    const daysUntil = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                    const statusStr = daysUntil > 0 ? `In ${daysUntil} Days` : 'Happening Now';
+                    const dateStr = `${start.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})} - ${end.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}`;
+                    
+                    const imgUrl = "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=800";
+
+                    const cardHtml = `
+                        <div class="trip-card">
+                            <img class="trip-card__img" src="${imgUrl}" alt="${trip.destination}">
+                            <div class="trip-card__body">
+                                <div class="trip-card__header">
+                                    <h4 style="font-size: var(--text-lg); font-family: var(--font-display);">${trip.destination}</h4>
+                                    <span class="status-badge" style="background: var(--clr-accent-glow); color: var(--clr-terracotta);">${statusStr}</span>
+                                </div>
+                                <p class="field__hint" style="display: flex; gap: var(--sp-xs); align-items: center; margin-bottom: var(--sp-md);">
+                                    <i data-lucide="calendar" style="width: 14px;"></i> ${dateStr}
+                                </p>
+                                <div>
+                                    <a href="itinerary.html?id=${trip.id}" class="btn btn--outline btn--full" style="margin-top: 1rem;">View Itinerary</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    tripRow.insertAdjacentHTML('beforeend', cardHtml);
+                });
+                lucide.createIcons();
+            }
+        });
 
         // Mobile Sidebar Toggle
         const menuBtn = document.getElementById('dash-menu-btn');

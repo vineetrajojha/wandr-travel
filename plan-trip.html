@@ -526,6 +526,10 @@
     </footer>
 
     <!-- JS -->
+    <!-- Supabase & Auth -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth-guard.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/nav.js"></script>
     <script>
@@ -592,19 +596,71 @@
         }
 
         // Form Submit
-        window.submitForm = function (e) {
+        window.submitForm = async function (e) {
             e.preventDefault();
             const btn = document.getElementById('generate-btn');
+            
+            // Validate inputs
+            const destination = document.getElementById('destination').value.trim();
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            
+            if (!destination || !startDate || !endDate) {
+                if (window.showToast) window.showToast('Please fill out all required fields.', 'warning');
+                return;
+            }
+
             btn.innerHTML = `<i data-lucide="loader" class="lucide-spin" style="width:20px;"></i> Generating...`;
             btn.disabled = true;
-            lucide.createIcons(); // recreate spinner icon
+            lucide.createIcons();
 
-            showToast('AI is generating your perfect itinerary...', 'info', 2000);
+            try {
+                if (window.showToast) showToast('AI is generating your perfect itinerary...', 'info', 2000);
 
-            setTimeout(() => {
-                const destVal = encodeURIComponent(document.querySelector('.field__input').value);
-                window.location.href = 'itinerary.html?dest=' + destVal;
-            }, 2000);
+                const typeChip = document.querySelector('.chip--active[data-filter="type"]');
+                const tripType = typeChip ? typeChip.textContent : 'Solo';
+                const budget = document.getElementById('budgetRange').value;
+                
+                const prefs = Array.from(document.querySelectorAll('input[name="pref"]:checked')).map(cb => cb.value);
+
+                const { data: { session } } = await window.supabaseClientInstance.auth.getSession();
+                
+                if (!session) {
+                    throw new Error('You must be logged in to plan a trip.');
+                }
+
+                const tripData = {
+                    user_id: session.user.id,
+                    destination: destination,
+                    start_date: startDate,
+                    end_date: endDate,
+                    travelers: people,
+                    trip_type: tripType,
+                    budget: budget,
+                    preferences: prefs
+                };
+
+                const { data, error } = await window.supabaseClientInstance
+                    .from('trips')
+                    .insert([tripData])
+                    .select();
+
+                if (error) throw error;
+
+                // Redirect to itinerary with the new trip ID
+                if (data && data.length > 0) {
+                    window.location.href = 'itinerary.html?id=' + data[0].id;
+                } else {
+                    // Fallback if select doesn't return data
+                    window.location.href = 'dashboard.html';
+                }
+
+            } catch (err) {
+                console.error('Error saving trip:', err);
+                if (window.showToast) window.showToast(err.message || 'Error saving trip', 'error');
+                btn.innerHTML = 'Generate Itinerary ✨';
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
