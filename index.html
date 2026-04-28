@@ -16,6 +16,40 @@
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 4px 0 0 0;
+        }
+
+        .autocomplete-dropdown li {
+            padding: var(--sp-xs) var(--sp-sm);
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+        }
+
+        .autocomplete-dropdown li:hover {
+            background: var(--bg-secondary);
+        }
+
+        .autocomplete-dropdown li:last-child {
+            border-bottom: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -71,38 +105,51 @@
                 <div class="hero__gradient"></div>
                 <div class="hero__noise"></div>
             </div>
-            <div class="hero__content container fade-in">
-                <p class="hero__eyebrow">Your next chapter begins</p>
-                <h1 class="hero__title">
-                    Discover the<br>
-                    <span class="hero__rotate-wrap">
-                        <span class="hero__rotate" id="rotating-word">World</span>
-                    </span>
-                </h1>
-                <p class="hero__sub">Plan immersive journeys, curated for the curious soul.</p>
+            <div class="hero__content container fade-in"
+                style="display: flex; gap: 4rem; align-items: center; justify-content: space-between; flex-wrap: wrap; text-align: left;">
+                <div style="flex: 1; min-width: 300px;">
+                    <p class="hero__eyebrow">Your next chapter begins</p>
+                    <h1 class="hero__title">
+                        Discover the<br>
+                        <span class="hero__rotate-wrap">
+                            <span class="hero__rotate" id="rotating-word">World</span>
+                        </span>
+                    </h1>
+                    <p class="hero__sub">Plan immersive journeys, curated for the curious soul.</p>
 
-                <div class="hero__actions">
-                    <a href="plan-trip.html" class="btn btn--primary btn--lg">Start Planning</a>
-                    <a href="destinations.html" class="btn btn--outline btn--lg">Explore Destinations</a>
+                    <div class="hero__actions" style="justify-content: flex-start;">
+                        <a href="plan-trip.html" class="btn btn--primary btn--lg">Start Planning</a>
+                        <a href="destinations.html" class="btn btn--outline btn--lg">Explore Destinations</a>
+                    </div>
                 </div>
 
-                <div class="flight-search" style="background: var(--bg-card); padding: var(--sp-lg); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); text-align: left; max-width: 800px; margin: 0 auto; color: var(--text-primary);">
-                    <div style="display: flex; gap: var(--sp-md); margin-bottom: var(--sp-md); font-weight: 500; font-size: var(--text-sm);">
+                <div class="flight-search"
+                    style="flex: 1; min-width: 320px; background: var(--bg-card); padding: var(--sp-lg); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); color: var(--text-primary); text-align: left; margin: 0;">
+                    <div
+                        style="display: flex; gap: var(--sp-md); margin-bottom: var(--sp-md); font-weight: 500; font-size: var(--text-sm);">
                         <label style="display: flex; align-items: center; gap: var(--sp-xs); cursor: pointer;">
-                            <input type="radio" name="trip-type" value="round-trip" checked onchange="window.toggleReturnDate && window.toggleReturnDate()"> Round Trip
+                            <input type="radio" name="trip-type" value="round-trip" checked
+                                onchange="window.toggleReturnDate && window.toggleReturnDate()"> Round Trip
                         </label>
                         <label style="display: flex; align-items: center; gap: var(--sp-xs); cursor: pointer;">
-                            <input type="radio" name="trip-type" value="one-way" onchange="window.toggleReturnDate && window.toggleReturnDate()"> One Way
+                            <input type="radio" name="trip-type" value="one-way"
+                                onchange="window.toggleReturnDate && window.toggleReturnDate()"> One Way
                         </label>
                     </div>
-                    <form id="flight-form" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--sp-sm); margin-bottom: var(--sp-md);" onsubmit="window.searchFlights && window.searchFlights(event)">
-                        <div class="field" style="margin: 0;">
+                    <form id="flight-form"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--sp-sm); margin-bottom: var(--sp-md);"
+                        onsubmit="window.searchFlights && window.searchFlights(event)">
+                        <div class="field" style="margin: 0; position: relative;">
                             <label class="field__label">From</label>
-                            <input type="text" id="flight-from" class="field__input" placeholder="e.g. DEL" required>
+                            <input type="text" id="flight-from" class="field__input" placeholder="e.g. DEL" required
+                                autocomplete="off">
+                            <ul id="flight-from-dropdown" class="autocomplete-dropdown hidden"></ul>
                         </div>
-                        <div class="field" style="margin: 0;">
+                        <div class="field" style="margin: 0; position: relative;">
                             <label class="field__label">To</label>
-                            <input type="text" id="flight-to" class="field__input" placeholder="e.g. BOM" required>
+                            <input type="text" id="flight-to" class="field__input" placeholder="e.g. BOM" required
+                                autocomplete="off">
+                            <ul id="flight-to-dropdown" class="autocomplete-dropdown hidden"></ul>
                         </div>
                         <div class="field" style="margin: 0;">
                             <label class="field__label">Depart</label>
@@ -114,22 +161,10 @@
                         </div>
                     </form>
                     <button type="submit" form="flight-form" id="flight-search-btn" class="btn btn--primary btn--full">
-                        <i data-lucide="plane-takeoff" style="width:18px;"></i> <span id="flight-search-text">Search Flights</span>
+                        <i data-lucide="plane-takeoff" style="width:18px;"></i> <span id="flight-search-text">Search
+                            Flights</span>
                     </button>
                 </div>
-            </div>
-        </section>
-
-        <!-- Flight Results Section (Hidden by Default) -->
-        <section id="flight-results-section" class="section-padding container hidden" style="background: var(--bg-secondary); border-radius: var(--r-lg); margin-top: var(--sp-xl);">
-            <div class="flex justify-between items-center mb-lg" style="margin-bottom: var(--sp-lg)">
-                <div>
-                    <h2 class="section-title" style="margin-bottom: var(--sp-xs)">Flight Results</h2>
-                    <p class="text-muted" id="flight-results-meta">Showing available flights</p>
-                </div>
-            </div>
-            <div id="flight-results-container" style="display: flex; flex-direction: column; gap: var(--sp-md);">
-                <!-- Dynamic flight cards will be injected here -->
             </div>
         </section>
 
@@ -247,14 +282,16 @@
     <!-- UI Chat Widget -->
     <div class="chat-widget" id="chat-widget">
         <div class="chat-widget__bubble" id="chat-bubble" aria-label="Open travel assistant">
-            <span class="chat-widget__icon">✈️</span>
-            <span class="chat-widget__label">AI Travel Assistant</span>
-            <span class="chat-widget__pulse"></span>
+            <span class="chat-widget__icon"><i data-lucide="bot"
+                    style="color: white; width: 28px; height: 28px;"></i></span <span class="chat-widget__pulse"></span>
         </div>
 
         <div class="chat-window" id="chat-window" aria-hidden="true">
             <div class="chat-window__header">
-                <div class="chat-window__avatar">🌍</div>
+                <div class="chat-window__avatar"
+                    style="background: white; color: var(--clr-accent); display: grid; place-items: center; border-radius: 50%;">
+                    <i data-lucide="bot"></i>
+                </div>
                 <div>
                     <h4>Wandr AI</h4>
                     <p class="chat-window__status">● Online</p>
@@ -265,7 +302,10 @@
 
             <div class="chat-window__messages" id="chat-messages">
                 <div class="chat-msg chat-msg--bot">
-                    <div class="chat-msg__avatar">🤖</div>
+                    <div class="chat-msg__avatar"
+                        style="background: var(--bg-card); color: var(--clr-accent); display: grid; place-items: center; border-radius: 50%;">
+                        <i data-lucide="bot" style="width:16px; height:16px;"></i>
+                    </div>
                     <div class="chat-msg__bubble">
                         Hi! I'm your AI travel assistant. Tell me your dream destination and I'll help you plan the
                         perfect trip! 🌏
@@ -304,7 +344,6 @@
                     <ul>
                         <li><a href="index.html">Home</a></li>
                         <li><a href="destinations.html">Destinations</a></li>
-                        <li><a href="plan-trip.html">Itineraries</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -314,14 +353,6 @@
                         <li><a href="auth.html">Login / Signup</a></li>
                         <li><a href="admin.html">Admin</a></li>
                     </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Connect</h4>
-                    <div class="footer-socials">
-                        <button class="btn-icon"><i data-lucide="instagram"></i></button>
-                        <button class="btn-icon"><i data-lucide="twitter"></i></button>
-                        <button class="btn-icon"><i data-lucide="youtube"></i></button>
-                    </div>
                 </div>
             </div>
             <div class="footer-bottom">

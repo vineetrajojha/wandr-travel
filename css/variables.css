@@ -76,6 +76,7 @@
 }
 
 [data-theme="dark"] {
+    color-scheme: dark;
     --bg-primary: var(--bg-primary-dark);
     --bg-primary-rgb: var(--bg-primary-rgb-dark);
     --bg-card: var(--bg-card-dark);
@@ -88,6 +89,7 @@
 /* System preference default */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
+        color-scheme: dark;
         --bg-primary: var(--bg-primary-dark);
         --bg-primary-rgb: var(--bg-primary-rgb-dark);
         --bg-card: var(--bg-card-dark);
